@@ -1,0 +1,76 @@
+substitutions:
+  name: "smart-gate-controller"
+  friendly_name: "Smart Gate"
+  hidden_ssid: "false"
+  mac_address: f588b6             # Using MAC on SonoffSV
+
+
+esphome:
+  name: sonoff-gatecontroller
+  friendly_name: ${friendly_name}
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secrets ota_password
+
+wifi:
+  ap:
+    ssid: "Sonoff-Gate"
+
+
+captive_portal:
+
+web_server:
+  port: 80
+    
+mqtt:
+  broker: !secrets mqtt_broker
+  username: !secrets mqtt_username
+  password: !secrets mqtt_password 
+  log_topic: gatec/${mac_address}/logs
+  topic_prefix: gatec/${mac_address}
+
+switch:
+  - platform: gpio
+    pin: GPIO12
+    id: relay
+  - platform: template
+    name: "Gate Switch"
+    icon: "mdi:gate"
+    turn_on_action:
+      - switch.turn_on: relay
+      - delay: 1s
+      - switch.turn_off: relay
+  - platform: gpio
+    pin: GPIO5
+    id: ped_sw
+  - platform: template
+    name: "ped"
+    turn_on_action:
+      - switch.turn_on: ped_sw
+      - delay: 1s
+      - switch.turn_off: ped_sw
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode:
+        input: True
+    name: "Gate Open/Closed"
+    id: gate_status
+    device_class: door
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+      - delayed_on_off: 0.4s
+
+
