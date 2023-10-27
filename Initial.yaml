@@ -19,7 +19,7 @@ logger:
 api:
 
 ota:
-  password: !secrets ota_password
+  password: !secret ota_password
 
 wifi:
   ap:
@@ -32,9 +32,9 @@ web_server:
   port: 80
     
 mqtt:
-  broker: !secrets mqtt_broker
-  username: !secrets mqtt_username
-  password: !secrets mqtt_password 
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password 
   log_topic: gatec/${mac_address}/logs
   topic_prefix: gatec/${mac_address}
 
